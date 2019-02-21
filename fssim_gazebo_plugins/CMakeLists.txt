@@ -29,7 +29,8 @@ include_directories(include
         ${GAZEBO_INCLUDE_DIRS}
         ${SDFormat_INCLUDE_DIRS}
         ${OGRE_INCLUDE_DIRS}
-        ${Boost_INCLUDE_DIRS})
+        ${Boost_INCLUDE_DIRS}
+        ".")
 
 find_package(catkin REQUIRED COMPONENTS
         gazebo_msgs
