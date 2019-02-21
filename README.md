@@ -1,59 +1,46 @@
-<p align="center"> 
-<img src="fssim_doc/img/fssim_logo.png">
-</p>
+Fork of [AMZ-Driverless/fssim](https://github.com/AMZ-Driverless/fssim) adapted to run under ROS melodic and Mint 19 (Ubuntu Bionic).
 
-# FSSIM 
-FSSIM is a vehicle simulator dedicated for Formula Student Driverless Competition. It was developed for autonomous software testing purposes and not for gaming. A version of this simulator was used to predict **lap time of *gotthard* at FSG 2018** trackdrive with **1% accuracy**. 
+# General Instruction for ROS
 
-This simulator is developed and tested on **Ubuntu 16.04 and ROS Kinetic** and both are assumed to be already installed.
+## Installation of ROS on Mint 19 (based on Ubuntu 18.04 bionic):
 
-The more extensive tutorial can be found under [Wiki](fssim_doc/index.md)
+```bash
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu bionic main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+sudo apt-get update
+sudo apt-get install ros-melodic-desktop-full python-catkin-tools
+```
 
-FSSIM is developed by [Juraj Kabzan](https://www.linkedin.com/in/juraj-kabzan-143698a1/) as part of our work at [AMZ-Driverless](http://driverless.amzracing.ch/).
+## Other useful stuff:
+Use tmux to subdivide your terminal window instead of opening multiple terminal windows or tabs.
 
 # How to Run It in your Workspace
-0. Install `sudo apt install ros-kinetic-desktop-full` and `sudo apt install python-catkin-tools`
-1. Clone this repository to an existing **ROS Workspace** initialized with `catkin init`
-2. Run `cd src/fssim` from the workspace.
-3. Run `./update_dependencies.sh`, you will need to approve multiple packages to be installed
-4. Run `catkin build`
-5. Source the workspace
-6. After successful building, run the simulator with `roslaunch fssim auto_fssim.launch`. RVIZ window will start. NOTE: You might need to untick and tick `FSSIM Track` and `RobotModel` in RVIZ in order to load the STL files. NOTE: This ` [Wrn] [ModelDatabase.cc:339] Getting models from[http://gazebosim.org/models/]. This may take a few seconds.` might take up to a minute when starting for the first time.
-7. The terminal will inform you what is happening. The loading time takes around 20 seconds. When `Sending RES GO` will show up in the terminal, you can start controlling the vehicle with `/fssim/cmd` topic.
-
-# Combine it with simple FSD skeleton Framework and drive a lap
-0. Install `sudo apt install ros-kinetic-desktop-full` and `sudo apt install python-catkin-tools`
-1. [Clone the AMZ skeleton workspace](https://github.com/AMZ-Driverless/fsd_skeleton#setting-up-the-workspace).
-2. Run `./update_dependencies.sh -f` from `fsd_skeleton`, you will need to approve multiple packages to be installed
-3. Compile with `catkin build`
-4. Source the workspace `source fsd_environment.sh`
-5. Run `roslaunch fssim_interface fssim.launch`
-6. Run `roslaunch control_meta trackdrive.launch`
-
-or
-
-5. Run automated test. Execute `FSD_ATS` (this command is loaded when sourcing `fsd_environment.sh`). If you will want to see the visualization, run RViZ: `roslaunch fssim_interface rviz.launch`. NOTE: The car will keep driving until the simulation will time-out since no lap counter is implemented.
-
-# Features
-* This simulator is targeted for FSD competition, thus it contains some of the real-car safety features
-  * **RES (Remote Emergency Stop)**: The vehicle will not be able to be controlled if a `/fssim/res_state/push_button = true` is not sent. On the other side, if  `/fssim/res_state/emergency = true` is send, the vehicle will stop immediately. If you start FSSIM with `roslaunch fssim auto_fssim.launch` or through `fssim_interface` this is done automatically.
-  * **Leaving Track**: If the simulation is started with `auto_fssim.launch`, an automated RES person is launched. This means, if the vehicle exists the track with all four wheels, RES-emergency will be send and the simulation will exit itself
-* FSSIM does not simulate the RAW sensors! It uses a **cone-sensor-model** instead. This means a cone observations around the vehicle are simulated with numerous noise-models.  The configuration file for this sensors can be found in [fssim/fssim_description/cars/gotthard/config/sensors.yaml](fssim_description/cars/gotthard/config/sensors.yaml). Thanks to this simplification it is real-time capable
-* FSSIM does not use GAZEBO Physics Engine to simulate the vehicle. Instead, it uses a basic **vehicle model** which is discretized with Euler Forward discretization and overwrites the model pose. This feature allows the simulated model to match closely the real world car.
-* **Automated Run** of multiple scenarios with different configurations and save logs as well as report.
-* Lap-time counter
-
-# Known problems
-* The update rate of TF between wheels and main chassis is too low or too rough. This causes jumps of wheels at higher speeds in RViZ. This influences only the visualization and not the functionality. 
-
-# Example
-<p align="center"> 
-<img src="fssim_doc/img/fssim_demo.gif" width="700" />
-</p>
-
-A note: this is a public copy of a private version. The public version might have some internal functionality removed.
-FSSIM was developed by
-
-<p align="center"> 
-<img src="fssim_doc/img/driverless-amzracing.png">
-</p>
+## Create ROS workspace via
+```bash
+mkdir my_ws_name
+cd my_ws_name
+mkdir src
+cd src
+```
+## Clone this repository and update dependencies
+```bash
+git clone https://github.com/Ungetym/fssim.git
+cd src/fssim
+./update_dependencies.sh
+```
+## Build the project
+```bash
+cd ../../..
+catkin_make -j1
+```
+Note: For some reason building using mutliple cores/threads might fail due to cross dependencies
+## Source the workspace
+```bash
+source devel/setup.bash
+```
+# Example application
+Launch the application using
+```bash
+roslaunch fssim auto_fssim.launch
+```
+Note: On the first startup, Gazebo tries to download models. If this fails and the screen remains black, download the models [here](https://bitbucket.org/osrf/gazebo_models) and place them in the .gazebo/models directory.
