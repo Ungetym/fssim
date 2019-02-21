@@ -27,6 +27,106 @@
             </plugin>
         </gazebo>
     </xacro:macro>
+    
+    <xacro:macro name="lidar_perfect">
+        <!-- Sensor links and fixed joints -->
+        <link name="lidar_perfect_link">
+            <inertial>
+                <mass value="1"/>
+                <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+            </inertial>
+        </link>
+        
+        <joint name="lidar_perfect_joint" type="fixed">
+            <parent link="chassis"/>
+            <child link="lidar_perfect_link"/>
+            <origin xyz="${sensors['lidar']['pos']['x']} 0.0 0.15" rpy="0 0 0"/>
+        </joint>
+        
+        <gazebo reference="lidar_perfect_link">
+			<sensor name="lidar" type="ray">
+				<updateRate>60.0</updateRate>
+				<ray>
+					<scan>
+						<horizontal>
+							<samples>400</samples>
+							<min_angle>-1</min_angle>
+							<max_angle>1</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>1.0</min>
+						<max>30.0</max>
+						<resolution>0.05</resolution>
+					</range>
+					<noise>
+						<type>gaussian</type>
+						<mean>0.0</mean>
+						<stddev>0.01</stddev>
+					</noise>
+				</ray>
+				<plugin name="lidar" filename="libgazebo_ros_laser.so">
+					<alwaysOn>true</alwaysOn>
+					<topicName>/lidar_perfect_scan</topicName>
+					<frameName>/fssim/vehicle/lidar_perfect_link</frameName>
+				</plugin>
+			</sensor>
+		</gazebo>
+    </xacro:macro>
+    
+    <xacro:macro name="camera_perfect">
+		<link name="camera_perfect_link">
+            <inertial>
+                <mass value="1"/>
+                <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+            </inertial>
+        </link>
+        
+        <joint name="camera_perfect_joint" type="fixed">
+            <parent link="chassis"/>
+            <child link="camera_perfect_link"/>
+            <origin xyz="${sensors['camera']['pos']['x']} ${sensors['camera']['pos']['y']} ${sensors['camera']['pos']['z']}" rpy="0 0 0"/>
+        </joint>
+		
+		
+        <gazebo reference="camera_perfect_link">
+			<sensor type="camera" name="camera_front">
+				<pose>0.2 0 0.5 0 0 0</pose>
+				<update_rate>30.0</update_rate>
+				<camera name="head">
+					<horizontal_fov>1.3962634</horizontal_fov>
+					<image>
+						<width>640</width>
+						<height>480</height>
+						<format>R8G8B8</format>
+					</image>
+					<clip>
+						<near>0.2</near>
+						<far>300</far>
+					</clip>
+					<noise>
+						<type>gaussian</type>
+						<mean>0.0</mean>
+						<stddev>0.007</stddev>
+					</noise>
+				</camera>
+				<plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+					<alwaysOn>true</alwaysOn>
+					<updateRate>0.0</updateRate>
+					<cameraName>camera_perfect</cameraName>
+					<imageTopicName>image_raw</imageTopicName>
+					<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+					<frameName>camera_link</frameName>
+					<hackBaseline>0.07</hackBaseline>
+					<distortionK1>0.0</distortionK1>
+					<distortionK2>0.0</distortionK2>
+					<distortionK3>0.0</distortionK3>
+					<distortionT1>0.0</distortionT1>
+					<distortionT2>0.0</distortionT2>
+				</plugin>
+			</sensor>
+		</gazebo>
+    </xacro:macro>
 
     <xacro:macro name="camera_pipeline">
         <gazebo>
