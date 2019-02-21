@@ -45,4 +45,4 @@ roslaunch fssim auto_fssim.launch
 ```
 Note: On the first startup, Gazebo tries to download models. If this fails and the screen remains black, download the models [here](https://bitbucket.org/osrf/gazebo_models) and place them in the .gazebo/models directory.
 
-# For autonomous driving check the [AMZ-Driverless/fsd_skeleton fork](https://github.com/Ungetym/fsd_skeleton)
+## For autonomous driving check the [AMZ-Driverless/fsd_skeleton fork](https://github.com/Ungetym/fsd_skeleton)
